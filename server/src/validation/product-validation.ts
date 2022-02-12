@@ -16,6 +16,7 @@ const payload = {
       .min(2, "Manufacturer must be at least 2 characters long")
       .max(50, "Manufacturer must be at most 50 characters long"),
     ram: string({ required_error: "RAM is required" }),
+    imageUrl: string({ required_error: "Image URL is required" }),
     storage: string({ required_error: "Storage is required" }),
     color: string({ required_error: "Color is required" })
       .min(2, "Color must be at least 2 characters long")

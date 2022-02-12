@@ -9,6 +9,7 @@ export interface ProductInput extends mongoose.Document {
   ram: string;
   storage: string;
   color: string;
+  imageUrl: string;
 }
 
 export interface ProductDocument extends ProductInput, mongoose.Document {
@@ -24,6 +25,7 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true },
     category: { type: String, required: true },
     manufacturer: { type: String, required: true },
+    imageUrl: { type: String, required: true },
     ram: { type: String, required: true },
     storage: { type: String, required: true },
     color: { type: String, required: true },
