@@ -1,13 +1,25 @@
 import express from "express";
+import validateResource from "../middleare/validate-resource";
+import {
+  createProductSchema,
+  getProductsBySearchParams,
+} from "../validation/product-validation";
+import {
+  createProductHandler,
+  getAllProductHandler,
+  searchProductHandler,
+} from "../controller/product.controller";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.send("Get router");
-});
+router.post("/", validateResource(createProductSchema), createProductHandler);
 
-router.post("/", (req, res) => {
-  res.send("Post router");
-});
+router.get("/", getAllProductHandler);
+
+router.get(
+  "/search",
+  validateResource(getProductsBySearchParams),
+  searchProductHandler
+);
 
 export default router;

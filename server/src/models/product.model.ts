@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
 
-export interface ProductDocument extends mongoose.Document {
-  _id: string;
+export interface ProductInput extends mongoose.Document {
   name: string;
   price: number;
   description: string;
   category: string;
   manufacturer: string;
-  ram: number;
-  storage: number;
+  ram: string;
+  storage: string;
   color: string;
+}
+
+export interface ProductDocument extends ProductInput, mongoose.Document {
+  _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,8 +24,8 @@ const productSchema = new mongoose.Schema(
     description: { type: String, required: true },
     category: { type: String, required: true },
     manufacturer: { type: String, required: true },
-    ram: { type: Number, required: true },
-    storage: { type: Number, required: true },
+    ram: { type: String, required: true },
+    storage: { type: String, required: true },
     color: { type: String, required: true },
   },
   {

@@ -15,8 +15,8 @@ const payload = {
     manufacturer: string({ required_error: "Manufacturer is required" })
       .min(2, "Manufacturer must be at least 2 characters long")
       .max(50, "Manufacturer must be at most 50 characters long"),
-    ram: number({ required_error: "RAM is required" }),
-    storage: number({ required_error: "Storage is required" }),
+    ram: string({ required_error: "RAM is required" }),
+    storage: string({ required_error: "Storage is required" }),
     color: string({ required_error: "Color is required" })
       .min(2, "Color must be at least 2 characters long")
       .max(50, "Color must be at most 50 characters long"),
@@ -25,20 +25,21 @@ const payload = {
 
 const paramsProductId = {
   params: object({
-    productId: string({ required_error: "Product ID is required" }),
+    productId: string().optional(),
   }),
 };
 
 const paramsSearchProducts = {
   query: object({
-    search: string({ required_error: "Search is required" }),
+    key: string().optional(),
+    value: string().optional(),
   }),
 };
 
 export const createProductSchema = object({ ...payload });
-export const getProductByIdSchema = object({ ...paramsProductId });
 export const getProductsBySearchParams = object({ ...paramsSearchProducts });
+export const getProductByIdSchema = object({ ...paramsProductId });
 
 export type CreateProductInput = TypeOf<typeof createProductSchema>;
-export type GetProductByIdInput = TypeOf<typeof getProductByIdSchema>;
 export type GetProductsBySearchInput = TypeOf<typeof getProductsBySearchParams>;
+export type GetProductByIdInput = TypeOf<typeof getProductByIdSchema>;
