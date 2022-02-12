@@ -31,17 +31,29 @@ export async function getAllProductHandler(req: Request, res: Response) {
 }
 
 export async function searchProductHandler(
-  req: Request<{}, {}, GetProductsBySearchInput["query"]>,
+  req: Request<{}, {}, {}, GetProductsBySearchInput["query"]>,
   res: Response
 ) {
   const key = req.query.key;
   const value = req.query.value;
+  const keyword = req.query.keyword;
+
+  let query: Record<string, any> = {};
+
+  if (keyword) {
+    query.$or = [
+      { name: { $regex: keyword, $options: "i" } },
+      { description: { $regex: keyword, $options: "i" } },
+      { manufacturer: { $regex: keyword, $options: "i" } },
+    ];
+  } else {
+    if (key && value) {
+      query[key] = value;
+    }
+    query = {};
+  }
 
   try {
-    // TODO: Validate key and value
-    // @ts-ignore
-    const query = { [key]: value };
-
     const products = await searchProducts(query);
 
     return res.send(products);

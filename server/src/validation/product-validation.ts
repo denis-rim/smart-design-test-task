@@ -34,6 +34,7 @@ const paramsSearchProducts = {
   query: object({
     key: string().optional(),
     value: string().optional(),
+    keyword: string().optional(),
   }),
 };
 
