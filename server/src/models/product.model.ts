@@ -1,18 +1,15 @@
 import mongoose from "mongoose";
 
-export interface ProductInput extends mongoose.Document {
+export interface ProductDocument extends mongoose.Document {
+  _id: string;
   name: string;
   price: number;
   description: string;
   category: string;
   manufacturer: string;
-  ram: string;
-  storage: string;
+  ram: number;
+  storage: number;
   color: string;
-}
-
-export interface ProductDocument extends ProductInput, mongoose.Document {
-  _id: string;
   createdAt: Date;
   updatedAt: Date;
 }
