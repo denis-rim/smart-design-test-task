@@ -5,7 +5,7 @@ export interface ProductInput extends mongoose.Document {
   price: number;
   description: string;
   category: string;
-  manufacturer: string;
+  brand: string;
   ram: string;
   storage: string;
   color: string;
@@ -24,7 +24,7 @@ const productSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     description: { type: String, required: true },
     category: { type: String, required: true },
-    manufacturer: { type: String, required: true },
+    brand: { type: String, required: true },
     imageUrl: { type: String, required: true },
     ram: { type: String, required: true },
     storage: { type: String, required: true },

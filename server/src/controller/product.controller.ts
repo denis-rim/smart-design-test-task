@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import {
   createProduct,
   getAllProducts,
@@ -34,23 +35,48 @@ export async function searchProductHandler(
   req: Request<{}, {}, {}, GetProductsBySearchInput["query"]>,
   res: Response
 ) {
-  const key = req.query.key;
-  const value = req.query.value;
+  const brand = req.query.brand;
+  const ram = req.query.ram;
+  const internalStorage = req.query.internalStorage;
   const keyword = req.query.keyword;
 
-  let query: Record<string, any> = {};
+  let query: Record<string, string | {}> = {};
 
   if (keyword) {
     query.$or = [
       { name: { $regex: keyword, $options: "i" } },
-      { description: { $regex: keyword, $options: "i" } },
-      { manufacturer: { $regex: keyword, $options: "i" } },
+      { brand: { $regex: keyword, $options: "i" } },
     ];
   } else {
-    if (key && value) {
-      query[key] = value;
+    // Bloody mess. Need to refactor some day.
+    if (brand && ram && internalStorage) {
+      query.$and = [
+        { brand: { $regex: brand, $options: "i" } },
+        { ram: { $regex: ram, $options: "i" } },
+        { storage: { $regex: internalStorage, $options: "i" } },
+      ];
+    } else if (brand && ram) {
+      query.$and = [
+        { brand: { $regex: brand, $options: "i" } },
+        { ram: { $regex: ram, $options: "i" } },
+      ];
+    } else if (brand && internalStorage) {
+      query.$and = [
+        { brand: { $regex: brand, $options: "i" } },
+        { storage: { $regex: internalStorage, $options: "i" } },
+      ];
+    } else if (ram && internalStorage) {
+      query.$and = [
+        { ram: { $regex: ram, $options: "i" } },
+        { storage: { $regex: internalStorage, $options: "i" } },
+      ];
+    } else if (brand) {
+      query.brand = { $regex: brand, $options: "i" };
+    } else if (ram) {
+      query.ram = { $regex: ram, $options: "i" };
+    } else if (internalStorage) {
+      query.storage = { $regex: internalStorage, $options: "i" };
     }
-    query = {};
   }
 
   try {

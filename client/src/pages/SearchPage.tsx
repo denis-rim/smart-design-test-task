@@ -10,40 +10,35 @@ import useDebounce from "../hooks/useDebounce";
 import ProductList from "../components/ProductList";
 import { ProductModel } from "./HomePage";
 
-const filters = [
+const filtersGroup = [
   {
-    id: "color",
-    name: "Color",
+    id: "brand",
+    name: "Brand",
     options: [
-      { value: "white", label: "White" },
-      { value: "beige", label: "Beige" },
-      { value: "blue", label: "Blue" },
-      { value: "brown", label: "Brown" },
-      { value: "green", label: "Green" },
-      { value: "purple", label: "Purple" },
+      { value: "samsung", label: "Samsung" },
+      { value: "apple", label: "Apple" },
     ],
   },
   {
-    id: "category",
-    name: "Category",
+    id: "ram",
+    name: "RAM",
     options: [
-      { value: "new-arrivals", label: "All New Arrivals" },
-      { value: "tees", label: "Tees" },
-      { value: "crewnecks", label: "Crewnecks" },
-      { value: "sweatshirts", label: "Sweatshirts" },
-      { value: "pants-shorts", label: "Pants & Shorts" },
+      { value: "1GB", label: "1GB" },
+      { value: "2GB", label: "2GB" },
+      { value: "3GB", label: "3GB" },
+      { value: "4GB", label: "4GB" },
+      { value: "6GB", label: "6GB" },
     ],
   },
   {
-    id: "sizes",
-    name: "Sizes",
+    id: "internalStorage",
+    name: "Internal Storage",
     options: [
-      { value: "xs", label: "XS" },
-      { value: "s", label: "S" },
-      { value: "m", label: "M" },
-      { value: "l", label: "L" },
-      { value: "xl", label: "XL" },
-      { value: "2xl", label: "2XL" },
+      { value: "16GB", label: "16GB" },
+      { value: "32GB", label: "32GB" },
+      { value: "64GB", label: "64GB" },
+      { value: "128GB", label: "128GB" },
+      { value: "256GB", label: "256GB" },
     ],
   },
 ];
@@ -55,27 +50,73 @@ function classNames(...classes: string[]) {
 function SearchPage() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [products, setProducts] = useState<ProductModel[]>([]);
-  const [search, setSearch] = useState("");
-
-  const debouncedSearch = useDebounce(search, 400);
+  const [keyword, setKeyword] = useState("");
+  const [filters, setFilters] = useState<{ [key: string]: string }>({});
+  const debouncedSearch = useDebounce(keyword, 600);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     async function searchProducts() {
       try {
+        setIsLoading(true);
         setProducts([]);
 
         const response = await axios.get<null, { data: ProductModel[] }>(
           `http://localhost:5000/api/products/search/?keyword=${debouncedSearch}`
         );
 
+        setIsLoading(false);
         setProducts(response.data);
       } catch (error) {
+        setIsLoading(false);
+
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     if (debouncedSearch) void searchProducts();
   }, [debouncedSearch]);
+
+  async function handleSubmitSearchInput(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
+    setIsLoading(true);
+    setProducts([]);
+
+    let filterQuery = " ";
+
+    if (filters) {
+      const filterKeys = Object.keys(filters);
+
+      if (filterKeys.length) {
+        filterQuery = filterKeys
+          .map((key) => `${key}=${filters[key]}`)
+          .join("&");
+      }
+    }
+    try {
+      const response = await axios.get<null, { data: ProductModel[] }>(
+        `http://localhost:5000/api/products/search/?${filterQuery}`
+      );
+
+      setProducts(response.data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const handleSearchCheckBox = (id: string, value: string) => {
+    setFilters({ ...filters, [id]: value });
+  };
 
   return (
     <div className="bg-white">
@@ -123,7 +164,7 @@ function SearchPage() {
 
                 {/* Filters */}
                 <form className="mt-4">
-                  {filters.map((section) => (
+                  {filtersGroup.map((section) => (
                     <Disclosure
                       as="div"
                       key={section.name}
@@ -158,7 +199,7 @@ function SearchPage() {
                                     id={`${section.id}-${optionIdx}-mobile`}
                                     name={`${section.id}[]`}
                                     defaultValue={option.value}
-                                    type="checkbox"
+                                    type="radio"
                                     className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
                                   />
                                   <label
@@ -184,13 +225,13 @@ function SearchPage() {
         <main className="max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8">
           <div className="flex justify-end">
             <div className="relative flex items-center">
-              <form>
+              <form onSubmit={handleSubmitSearchInput}>
                 <input
                   type="text"
-                  name="search"
+                  name="keyword"
                   id="search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md"
                 />
                 <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
@@ -224,7 +265,7 @@ function SearchPage() {
 
               <div className="hidden lg:block">
                 <form className="divide-y divide-gray-200 space-y-10">
-                  {filters.map((section, sectionIdx) => (
+                  {filtersGroup.map((section, sectionIdx) => (
                     <div
                       key={section.name}
                       // @ts-ignore
@@ -242,9 +283,11 @@ function SearchPage() {
                             >
                               <input
                                 id={`${section.id}-${optionIdx}`}
-                                name={`${section.id}[]`}
-                                defaultValue={option.value}
-                                type="checkbox"
+                                name={`${section.id}`}
+                                onClick={(e) =>
+                                  handleSearchCheckBox(section.id, option.value)
+                                }
+                                type="radio"
                                 className="h-4 w-4 border-gray-300 rounded text-indigo-600 focus:ring-indigo-500"
                               />
                               <label
@@ -265,7 +308,13 @@ function SearchPage() {
 
             {/* Product grid */}
             <div className="mt-6 lg:mt-0 lg:col-span-2 xl:col-span-3">
-              <ProductList products={products} />
+              {isLoading ? (
+                <div className="flex justify-center items-center h-screen w-screen">
+                  <div className="spinner m-4">Loading...</div>
+                </div>
+              ) : (
+                <ProductList products={products} />
+              )}
             </div>
           </div>
         </main>

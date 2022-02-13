@@ -2,6 +2,12 @@ import { Link } from "react-router-dom";
 import { ProductModel } from "../pages/HomePage";
 
 function ProductList({ products }: { products: ProductModel[] }) {
+  if (products.length === 0) {
+    return (
+      <div className="flex justify-center text-2xl">No products found</div>
+    );
+  }
+
   return (
     <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
       {products.map((product) => (

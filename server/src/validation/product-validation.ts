@@ -12,7 +12,7 @@ const payload = {
     category: string({ required_error: "Category is required" })
       .min(2, "Category must be at least 2 characters long")
       .max(50, "Category must be at most 50 characters long"),
-    manufacturer: string({ required_error: "Manufacturer is required" })
+    brand: string({ required_error: "Manufacturer is required" })
       .min(2, "Manufacturer must be at least 2 characters long")
       .max(50, "Manufacturer must be at most 50 characters long"),
     ram: string({ required_error: "RAM is required" }),
@@ -32,8 +32,9 @@ const paramsProductId = {
 
 const paramsSearchProducts = {
   query: object({
-    key: string().optional(),
-    value: string().optional(),
+    brand: string().optional(),
+    ram: string().optional(),
+    internalStorage: string().optional(),
     keyword: string().optional(),
   }),
 };
