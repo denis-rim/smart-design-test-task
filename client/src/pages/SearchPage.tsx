@@ -8,7 +8,12 @@ import { ChevronDownIcon, PlusSmIcon } from "@heroicons/react/solid";
 import useDebounce from "../hooks/useDebounce";
 
 import ProductList from "../components/ProductList";
+import Spinner from "../components/Spinner/Spinner";
 import { ProductModel } from "./HomePage";
+import {
+  ErrorNotification,
+  NotificationModal,
+} from "../components/NotificationModal";
 
 const filtersGroup = [
   {
@@ -25,7 +30,6 @@ const filtersGroup = [
     options: [
       { value: "1GB", label: "1GB" },
       { value: "2GB", label: "2GB" },
-      { value: "3GB", label: "3GB" },
       { value: "4GB", label: "4GB" },
       { value: "6GB", label: "6GB" },
     ],
@@ -49,28 +53,36 @@ function classNames(...classes: string[]) {
 
 function SearchPage() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
   const [products, setProducts] = useState<ProductModel[]>([]);
   const [keyword, setKeyword] = useState("");
   const [filters, setFilters] = useState<{ [key: string]: string }>({});
-  const debouncedSearch = useDebounce(keyword, 600);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const debouncedSearch = useDebounce(keyword, 600);
 
   useEffect(() => {
     async function searchProducts() {
       try {
         setIsLoading(true);
         setProducts([]);
+        setError("");
 
         const response = await axios.get<null, { data: ProductModel[] }>(
           `http://localhost:5000/api/products/search/?keyword=${debouncedSearch}`
         );
 
-        setIsLoading(false);
         setProducts(response.data);
       } catch (error) {
-        setIsLoading(false);
-
         console.log(error);
+        let errorMessage = "Error: ";
+
+        if (axios.isAxiosError(error) && error) {
+          errorMessage += error;
+        }
+
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }
@@ -86,6 +98,7 @@ function SearchPage() {
 
     setIsLoading(true);
     setProducts([]);
+    setError("");
 
     let filterQuery = " ";
 
@@ -104,11 +117,15 @@ function SearchPage() {
       );
 
       setProducts(response.data);
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
-
       console.log(error);
+      let errorMessage = "Error: ";
+
+      if (axios.isAxiosError(error) && error) {
+        errorMessage += error;
+      }
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -223,13 +240,14 @@ function SearchPage() {
         </Transition.Root>
 
         <main className="max-w-2xl mx-auto py-4 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8">
-          <div className="flex justify-end">
+          {Boolean(error) && <ErrorNotification text={error} />}
+          <div className="flex justify-end mt-2">
             <div className="relative flex items-center">
               <form onSubmit={handleSubmitSearchInput}>
                 <input
                   type="text"
                   name="keyword"
-                  id="search"
+                  id="keyword"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full pr-12 sm:text-sm border-gray-300 rounded-md"
@@ -245,6 +263,7 @@ function SearchPage() {
               </form>
             </div>
           </div>
+
           <div className="pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
             <aside>
               <h2 className="sr-only">Filters</h2>
@@ -284,7 +303,7 @@ function SearchPage() {
                               <input
                                 id={`${section.id}-${optionIdx}`}
                                 name={`${section.id}`}
-                                onClick={(e) =>
+                                onClick={() =>
                                   handleSearchCheckBox(section.id, option.value)
                                 }
                                 type="radio"
@@ -310,7 +329,7 @@ function SearchPage() {
             <div className="mt-6 lg:mt-0 lg:col-span-2 xl:col-span-3">
               {isLoading ? (
                 <div className="flex justify-center items-center h-screen w-screen">
-                  <div className="spinner m-4">Loading...</div>
+                  <Spinner />
                 </div>
               ) : (
                 <ProductList products={products} />

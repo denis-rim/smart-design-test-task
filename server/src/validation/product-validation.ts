@@ -5,10 +5,10 @@ const payload = {
     name: string({ required_error: "Name is required" })
       .min(2, "Name must be at least 2 characters long")
       .max(50, "Name must be at most 50 characters long"),
-    price: number({ required_error: "Price is required" }),
+    price: string({ required_error: "Price is required" }),
     description: string({ required_error: "Description is required" })
       .min(2, "Description must be at least 2 characters long")
-      .max(500, "Description must be at most 500 characters long"),
+      .max(1000, "Description must be at most 500 characters long"),
     category: string({ required_error: "Category is required" })
       .min(2, "Category must be at least 2 characters long")
       .max(50, "Category must be at most 50 characters long"),

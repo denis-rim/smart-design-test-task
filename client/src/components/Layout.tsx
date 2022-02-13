@@ -7,7 +7,7 @@ function Layout() {
         <div className="md:flex border-b pb-4 md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
             <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-              Test Task for Smart Design
+              <Link to="/">Test Task for Smart Design</Link>
             </h2>
           </div>
           <div className="mt-4 flex md:mt-0 md:ml-4">
