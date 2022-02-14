@@ -19,15 +19,15 @@ router.post("/", validateResource(createProductSchema), createProductHandler);
 router.get("/", getAllProductHandler);
 
 router.get(
-  "/:productId",
-  validateResource(getProductByIdSchema),
-  getProductByIdHandler
-);
-
-router.get(
   "/search",
   validateResource(getProductsBySearchParams),
   searchProductHandler
+);
+
+router.get(
+  "/:productId",
+  validateResource(getProductByIdSchema),
+  getProductByIdHandler
 );
 
 export default router;
