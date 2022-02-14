@@ -10,10 +10,7 @@ import useDebounce from "../hooks/useDebounce";
 import ProductList from "../components/ProductList";
 import Spinner from "../components/Spinner/Spinner";
 import { ProductModel } from "./HomePage";
-import {
-  ErrorNotification,
-  NotificationModal,
-} from "../components/NotificationModal";
+import { ErrorNotification } from "../components/NotificationModal";
 
 const filtersGroup = [
   {
