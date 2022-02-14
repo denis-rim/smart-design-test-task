@@ -17,3 +17,7 @@ export async function getAllProducts() {
 export function searchProducts(query: FilterQuery<ProductDocument>) {
   return ProductModel.find(query);
 }
+
+export function getProductById(id: string) {
+  return ProductModel.findById(id);
+}

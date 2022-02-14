@@ -76,6 +76,7 @@ function SearchPage() {
         setProducts(response.data);
       } catch (error) {
         console.log(error);
+
         let errorMessage = "Error: ";
 
         if (axios.isAxiosError(error) && error) {

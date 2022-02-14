@@ -231,8 +231,9 @@ function CreateProductPage() {
                         onChange={(e) => handleChange(e)}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       >
-                        <option>Black</option>
-                        <option>Grey</option>
+                        <option>gray</option>
+                        <option>red</option>
+                        <option>teal</option>
                       </select>
                     </div>
                   </div>

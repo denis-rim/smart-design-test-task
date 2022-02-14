@@ -26,7 +26,7 @@ const payload = {
 
 const paramsProductId = {
   params: object({
-    productId: string().optional(),
+    productId: string(),
   }),
 };
 

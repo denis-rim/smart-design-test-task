@@ -3,10 +3,12 @@ import { Request, Response } from "express";
 import {
   createProduct,
   getAllProducts,
+  getProductById,
   searchProducts,
 } from "../service/product.service";
 import {
   CreateProductInput,
+  GetProductByIdInput,
   GetProductsBySearchInput,
 } from "../validation/product-validation";
 
@@ -83,6 +85,20 @@ export async function searchProductHandler(
     const products = await searchProducts(query);
 
     return res.send(products);
+  } catch (error) {
+    return res.status(400).send(error);
+  }
+}
+
+export async function getProductByIdHandler(
+  req: Request<GetProductByIdInput["params"]>,
+  res: Response
+) {
+  try {
+    const id = req.params.productId;
+    const product = await getProductById(id);
+
+    return res.send(product);
   } catch (error) {
     return res.status(400).send(error);
   }
