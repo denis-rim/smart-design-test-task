@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { ProductModel } from "../pages/HomePage";
+
+import { ProductModel } from "../services/handlers/product";
 
 function ProductList({ products }: { products: ProductModel[] }) {
   if (products.length === 0) {

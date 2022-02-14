@@ -9,8 +9,12 @@ import useDebounce from "../hooks/useDebounce";
 
 import ProductList from "../components/ProductList";
 import Spinner from "../components/Spinner/Spinner";
-import { ProductModel } from "./HomePage";
 import { ErrorNotification } from "../components/NotificationModal";
+import { ProductModel } from "../services/handlers/product";
+import {
+  searchByFilterQuery,
+  searchByKeyword,
+} from "../services/handlers/search";
 
 const filtersGroup = [
   {
@@ -66,9 +70,7 @@ function SearchPage() {
         setProducts([]);
         setError("");
 
-        const response = await axios.get<null, { data: ProductModel[] }>(
-          `http://localhost:5000/api/products/search/?keyword=${debouncedSearch}`
-        );
+        const response = await searchByKeyword(debouncedSearch);
 
         setProducts(response.data);
       } catch (error) {
@@ -110,9 +112,7 @@ function SearchPage() {
       }
     }
     try {
-      const response = await axios.get<null, { data: ProductModel[] }>(
-        `http://localhost:5000/api/products/search/?${filterQuery}`
-      );
+      const response = await searchByFilterQuery(filterQuery);
 
       setProducts(response.data);
     } catch (error) {

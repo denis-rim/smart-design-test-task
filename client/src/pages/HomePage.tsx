@@ -1,23 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+
 import ProductList from "../components/ProductList";
 import { ErrorNotification } from "../components/NotificationModal";
 import Spinner from "../components/Spinner/Spinner";
 
-export interface ProductModel {
-  _id: string;
-  name: string;
-  price: number;
-  description: string;
-  category: string;
-  manufacturer: string;
-  imageUrl: string;
-  ram: string;
-  storage: string;
-  color: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { fetchProducts, ProductModel } from "../services/handlers/product";
 
 function HomePage() {
   const [products, setProducts] = useState<ProductModel[]>([]);
@@ -31,9 +19,7 @@ function HomePage() {
         setIsLoading(true);
         setError("");
 
-        const response = await axios.get<null, { data: ProductModel[] }>(
-          "http://localhost:5000/api/products/"
-        );
+        const response = await fetchProducts();
 
         setProducts(response.data);
       } catch (error) {

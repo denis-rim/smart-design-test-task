@@ -6,7 +6,7 @@ import { RadioGroup } from "@headlessui/react";
 import { ErrorNotification } from "../components/NotificationModal";
 import Spinner from "../components/Spinner/Spinner";
 
-import { ProductModel } from "./HomePage";
+import { fetchProductById, ProductModel } from "../services/handlers/product";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -26,9 +26,7 @@ function ProductDetails() {
       setError("");
 
       try {
-        const response = await axios.get<null, { data: ProductModel }>(
-          `http://localhost:5000/api/products/${productId}`
-        );
+        const response = await fetchProductById(productId);
 
         setProduct(response.data);
       } catch (error) {
